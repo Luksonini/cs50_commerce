@@ -1,23 +1,27 @@
 {% extends "auctions/layout.html" %}
 
-{% block body %}
+{% block body%}
     <h2>Active Listings</h2>
 
-    <div class="flex flex-wrap items-end">
+    <div class="flex flex-wrap items-end justify-center">
         {% for auction in auctions %}
-        <a class="inline-block m-4 p-4 border border-gray-300 rounded-lg cursor-pointer shadow-lg transform transition-transform hover:scale-105">
+        <div class="">
+            <a class="inline-block m-4 p-4 border-2 border-red-200 bg-red-100 rounded-lg cursor-pointer shadow-lg transform transition-transform hover:scale-105 overflow-hidden">
                 <div class="w-96 h-96">
                     <img class="object-cover w-full h-full" src="{{ auction.picture }}" alt="{{ auction.auction_name }}">
                 </div>
                 <div class="item-description mt-2">
                     <h3 class="font-bold">{{ auction.auction_name }}</h3>
-                    <p>Current price: {{ auction.actual_bid }}</p>
+                    <span class="font-semibold">Current price: </span><span class="font-bold text-lime-500 text-2xl">{{ auction.actual_bid }} $</span>
                     <p>Owner: {{ auction.owner }}</p>
                 </div>
             </a>
+        </div>
         {% endfor %}
+        {% if listing_from %} 
+            {% include "auctions/create_listing.html" %}  
+        {% endif %}  
     </div>
-
     <h2>Watchlist</h2>
     <ul>
         {% for auction in watchlist_auctions %}

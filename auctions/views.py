@@ -4,18 +4,21 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, AuctionListingModel
+from .models import User, AuctionListingModel, CategoryModel
 
 
 def index(request):
-
+    listing_from = ListingForm()
+    categories = CategoryModel.objects.all()
     auctions = AuctionListingModel.objects.all()
+    watchlist_auctions = request.user.watchlist.all()
     for auction in auctions:
         if not auction.actual_bid:
             auction.actual_bid = auction.initial_bid
             auction.save()
-
-    watchlist_auctions = request.user.watchlist.all()
+    if request.method == "POST":
+        if request.POST["make_new_list"] == "True":    
+            return render(request, "auctions/index.html", {"auctions" : auctions, 'watchlist_auctions' : watchlist_auctions, "listing_from" : listing_from, "categories" : categories})
     
     return render(request, "auctions/index.html", {"auctions" : auctions, 'watchlist_auctions' : watchlist_auctions})
 
@@ -70,3 +73,40 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+
+
+from django import forms
+
+class ListingForm(forms.Form):
+    title = forms.CharField(
+        max_length=100,
+        label='Title',
+        widget=forms.TextInput(attrs={'class': 'w-full rounded-lg'}),
+    )
+    description = forms.CharField(
+        label='Description',
+        widget=forms.Textarea(attrs={'class': 'w-full rounded-lg'}),
+    )
+    starting_bid = forms.FloatField(
+        label='Starting Bid',
+        widget=forms.NumberInput(attrs={'class': 'w-full rounded-lg'}),
+    )
+    image_url = forms.URLField(
+        label='Image URL',
+        required=False,
+        widget=forms.URLInput(attrs={'class': 'w-full rounded-lg'}),
+    )
+    # category = forms.ModelMultipleChoiceField(queryset=CategoryModel.objects.all(),
+    #     widget=forms.CheckboxSelectMultiple(attrs={'class': "flex flex-wrap gap-5 form-checkbox h-5 w-5 text-indigo-600"}))
+
+    def clean_starting_bid(self):
+        starting_bid = self.cleaned_data.get('starting_bid')
+        if starting_bid <= 0:
+            raise forms.ValidationError('Starting bid must be a positive number.')
+        return starting_bid
+    
+
+def create_listing(request):
+    listing_from = ListingForm()
+    categories = CategoryModel.objects.all()
+    return render(request, "auctions/create_listing.html", {"listing_from" : listing_from, "categories" : categories})

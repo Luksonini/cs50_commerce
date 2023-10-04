@@ -2,10 +2,15 @@ body {
     padding: 10px;
 }
 
-/* .auction_card{
-    background-color: beige;
+#nav-link{
+    background-color: #EF4444;
+    color: #FFFFFF;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s ease;
 }
 
-.product-img img{
-    max-width: 250px;
-} */
+.nav-link:hover{
+    background-color: #DC2626;
+}
