@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
         <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     </head>
     <body class="bg-red-50 ml-8 mr-8 relative">
         <h1>Auctions</h1>
@@ -23,26 +24,45 @@
                     <a class="nav-link bg-red-300 hover:bg-red-500 text-white font-bold py-2 ml-2 rounded-lg" href="{% url 'index' %}">Active Listings</a>
                 </li>
                 <li class="nav-item">
-                    <form action="{% url 'index' %}" method="post">
+                    <a class="relative nav-link bg-red-300 hover:bg-red-500 text-white font-bold py-2 ml-4 rounded-lg" href="{% url 'index' %}">
+                        <div class="w-10 h-10 flex justify-center items-center absolute bg-yellow-300 rounded-full top-0 right-0 transform translate-x-1/2 translate-y-[-50%]">
+                            <p class="m-0 p-0 text-center">{{ watchlist_auctions|length }}</p>
+                        </div>
+                        Watchlist
+                    </a>
+                </li>                
+                <li class="nav-item">
+                    <form method="post">
                         {% csrf_token %}
                         <input type="hidden" name="make_new_list" value="True">
-                        <input type="submit" value="Create Listings" class="nav-link bg-red-300 hover:bg-red-500 text-white font-bold py-2 ml-2 rounded-lg">
+                        <input type="submit" value="Create Listings" class="nav-link bg-red-300 hover:bg-red-500 text-white font-bold py-2 ml-4 rounded-lg">
                     </form>
                     {% comment %} <a class="nav-link bg-red-300 hover:bg-red-500 text-white font-bold py-2 ml-2 rounded-lg" href="{% url 'create_listing' %}">Create Listings</a> {% endcomment %}
                 </li>
+                <div class="btn-group">
+                    <button type="button" class="btn bg-red-300 border-none hover:bg-red-500 text-white font-bold py-2 ml-4 rounded-lg dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                      Categories
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="{% url 'index' %}">All</a></li>
+                      {% for category in rest_categories %}
+                      <li><a class="dropdown-item" href="{% url 'category' category.id %}">{{category}}</a></li>
+                      {% endfor %}
+                    </ul>
+                  </div>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link bg-red-300 hover:bg-red-500 text-white font-bold py-2 ml-2 px-4 rounded-lg" href="{% url 'logout' %}">Log Out</a>
+                        <a class="nav-link bg-red-300 hover:bg-red-500 text-white font-bold py-2 ml-4 px-4 rounded-lg" href="{% url 'logout' %}">Log Out</a>
                     </li>
                     {% comment %} <li class="nav-item">
                         <a class="nav-link bg-red-300 hover:bg-red-500 text-white font-bold py-2 ml-2 px-4 rounded-lg" href="{% url 'logout' %}">Log Out</a>
                     </li> {% endcomment %}
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link bg-red-300 hover:bg-red-500 text-white font-bold py-2 ml-2 px-4 rounded-lg" href="{% url 'login' %}">Log In</a>
+                        <a class="nav-link bg-red-300 hover:bg-red-500 text-white font-bold py-2 ml-4 px-4 rounded-lg" href="{% url 'login' %}">Log In</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link bg-red-300 hover:bg-red-500 text-white font-bold py-2 ml-2 px-4 rounded-lg" href="{% url 'register' %}">Register</a>
+                        <a class="nav-link bg-red-300 hover:bg-red-500 text-white font-bold py-2 ml-4 px-4 rounded-lg" href="{% url 'register' %}">Register</a>
                     </li>
                 {% endif %}
             </ul>

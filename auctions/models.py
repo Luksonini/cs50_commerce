@@ -33,7 +33,7 @@ class AuctionListingModel(models.Model):
     description = models.TextField(max_length=5000)
     initial_bid = models.IntegerField()
     actual_bid = models.IntegerField(blank=True, null=True, default=None)
-    auction_category = models.ManyToManyField(CategoryModel, related_name='categories')
+    auction_category = models.ManyToManyField(CategoryModel, related_name='auctions')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_auctions')
     watch_list = models.ManyToManyField(User, related_name='watchlist')
     picture = models.URLField(blank=True, null=True)

@@ -1,12 +1,13 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
 {% block body%}
     <h2>Active Listings</h2>
 
-    <div class="flex flex-wrap items-end justify-center">
+    <div class="flex flex-wrap justify-start mx-20">
         {% for auction in auctions %}
-        <div class="">
-            <a class="inline-block m-4 p-4 border-2 border-red-200 bg-red-100 rounded-lg cursor-pointer shadow-lg transform transition-transform hover:scale-105 overflow-hidden">
+        <div class="basis-1/3">
+            <a class="relative inline-block m-4 p-4 border-2 border-red-200 bg-red-100 rounded-lg cursor-pointer shadow-lg overflow-hidden">
                 <div class="w-96 h-96">
                     <img class="object-cover w-full h-full" src="{{ auction.picture }}" alt="{{ auction.auction_name }}">
                 </div>
@@ -14,6 +15,26 @@
                     <h3 class="font-bold">{{ auction.auction_name }}</h3>
                     <span class="font-semibold">Current price: </span><span class="font-bold text-lime-500 text-2xl">{{ auction.actual_bid }} $</span>
                     <p>Owner: {{ auction.owner }}</p>
+                </div>
+                {% if auction in request.user.watchlist.all %}
+                <div class="w-1/2 h-10 flex justify-center items-center absolute bg-blue-300 top-0 right-0 rotate-45 translate-y-1/3 translate-x-1/3 transition-transform duration-300 transform hover:scale-125">
+                    <span class="font-bold text-white">Tracked</span>
+                </div>
+                {% endif %}
+                <div class="w-5 h-5 ml-1 mt-1 flex justify-center items-center absolute top-0 left-0 transition-transform duration-300 transform hover:scale-125">
+                    {% if auction in request.user.watchlist.all %}
+                    <form id="imageForm" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="remove_from_watchlist" value="{{ auction.id }}">
+                        <input type="image" src="{% static 'auctions/close.png' %}" class="w-5 h-5 ml-1 mt-1">
+                    </form> 
+                    {% else %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="add_to_wathlist" value="{{ auction.id }}">
+                        <input type="image" src="{% static 'auctions/check.png' %}" class="w-5 h-5 ml-1 mt-1">
+                    </form> 
+                    {% endif %}
                 </div>
             </a>
         </div>

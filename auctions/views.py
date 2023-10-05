@@ -9,7 +9,7 @@ from .models import User, AuctionListingModel, CategoryModel
 
 def index(request):
     listing_from = ListingForm()
-    categories = CategoryModel.objects.all()
+    rest_categories = CategoryModel.objects.all()
     auctions = AuctionListingModel.objects.all()
     watchlist_auctions = request.user.watchlist.all()
     for auction in auctions:
@@ -17,11 +17,71 @@ def index(request):
             auction.actual_bid = auction.initial_bid
             auction.save()
     if request.method == "POST":
-        if request.POST["make_new_list"] == "True":    
-            return render(request, "auctions/index.html", {"auctions" : auctions, 'watchlist_auctions' : watchlist_auctions, "listing_from" : listing_from, "categories" : categories})
-    
-    return render(request, "auctions/index.html", {"auctions" : auctions, 'watchlist_auctions' : watchlist_auctions})
 
+        add_to_watchlist = request.POST.get("add_to_wathlist")
+        remove_from_watchlist = request.POST.get("remove_from_watchlist")
+        if add_to_watchlist:
+            auction_id = int(add_to_watchlist)
+            auction_to_add = AuctionListingModel.objects.get(pk=auction_id)
+            request.user.watchlist.add(auction_to_add)
+
+        elif remove_from_watchlist:
+            auction_id = int(remove_from_watchlist)
+            auction_to_remove = AuctionListingModel.objects.get(pk=auction_id)
+            request.user.watchlist.remove(auction_to_remove)
+        
+
+        elif request.POST["make_new_list"] == "True":    
+            return render(request, "auctions/index.html", {
+                "auctions" : auctions, 
+                'watchlist_auctions' : watchlist_auctions, 
+                "listing_from" : listing_from, 
+                "rest_categories" : rest_categories, 
+                "categories" : rest_categories
+                })
+    
+    return render(request, "auctions/index.html", {
+        "auctions" : auctions, 
+        'watchlist_auctions' : watchlist_auctions, 
+        "rest_categories" : rest_categories})
+
+
+def category(request, category_id):
+    listing_from = ListingForm()
+    categories = CategoryModel.objects.get(pk=category_id)
+    rest_categories = CategoryModel.objects.exclude(pk=category_id).all()
+    auctions = categories.auctions.all()
+    watchlist_auctions = request.user.watchlist.all()
+    if request.method == "POST":
+
+        add_to_watchlist = request.POST.get("add_to_wathlist")
+        remove_from_watchlist = request.POST.get("remove_from_watchlist")
+        if add_to_watchlist:
+            auction_id = int(add_to_watchlist)
+            auction_to_add = AuctionListingModel.objects.get(pk=auction_id)
+            request.user.watchlist.add(auction_to_add)
+
+        elif remove_from_watchlist:
+            auction_id = int(remove_from_watchlist)
+            auction_to_remove = AuctionListingModel.objects.get(pk=auction_id)
+            request.user.watchlist.remove(auction_to_remove)
+
+        elif request.POST["make_new_list"] == "True":    
+            return render(request, "auctions/index.html", {
+                "auctions" : AuctionListingModel.objects.filter(auction_category=categories), 
+                'watchlist_auctions' : watchlist_auctions, 
+                "listing_from" : listing_from, 
+                "rest_categories" : rest_categories,
+                "categories" :  CategoryModel.objects.all(),
+                "category_id" :  category_id
+                })
+    
+    return render(request, "auctions/index.html", {
+        "auctions" : auctions, 
+        'watchlist_auctions' : watchlist_auctions, 
+        "rest_categories" : rest_categories,
+        "categories" : categories
+        })
 
 def login_view(request):
     if request.method == "POST":
