@@ -7,7 +7,7 @@
     <div class="flex flex-wrap justify-start mx-20">
         {% for auction in auctions %}
         <div class="basis-1/3">
-            <a class="relative inline-block m-4 p-4 border-2 border-red-200 bg-red-100 rounded-lg cursor-pointer shadow-lg overflow-hidden">
+            <a href={% url 'details' auction.id %} class="no-underline hover:text-current hover:no-underline relative inline-block m-4 p-4 border-2 border-red-200 bg-red-100 rounded-lg cursor-pointer shadow-lg overflow-hidden">
                 <div class="w-96 h-96">
                     <img class="object-cover w-full h-full" src="{{ auction.picture }}" alt="{{ auction.auction_name }}">
                 </div>

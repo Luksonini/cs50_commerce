@@ -62,6 +62,7 @@ class CommentModel(models.Model):
     auction = models.ManyToManyField(AuctionListingModel, related_name="comments_for_auction")
     commenter = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField(max_length=5000)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         first_auction = self.auction.first()

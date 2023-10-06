@@ -83,6 +83,12 @@ def category(request, category_id):
         "categories" : categories
         })
 
+def details(request, auction_id):
+    listing_from = ListingForm()
+    auction = AuctionListingModel.objects.get(pk=auction_id)
+    comments = auction.comments_for_auction.all()
+    return render(request, "auctions/details.html", {"auction" : auction, "comments" : comments})
+
 def login_view(request):
     if request.method == "POST":
 
@@ -156,8 +162,6 @@ class ListingForm(forms.Form):
         required=False,
         widget=forms.URLInput(attrs={'class': 'w-full rounded-lg'}),
     )
-    # category = forms.ModelMultipleChoiceField(queryset=CategoryModel.objects.all(),
-    #     widget=forms.CheckboxSelectMultiple(attrs={'class': "flex flex-wrap gap-5 form-checkbox h-5 w-5 text-indigo-600"}))
 
     def clean_starting_bid(self):
         starting_bid = self.cleaned_data.get('starting_bid')
