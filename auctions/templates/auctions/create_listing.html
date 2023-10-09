@@ -1,34 +1,34 @@
-{% comment %} {% extends 'auctions/layout.html '%}
+{% extends "auctions/layout.html" %}
+{% block title %}Create{% endblock %}
+{% block body %}
+    <div class="flex flex-wrap justify-start mx-20">
 
-{% block body %} {% endcomment %}
-
-<div class="flex justify-center fixed top-20 mt-10 z-1000 left-0 right-0 w-1/3 p-10 border-4 border-red-400 ml-auto mr-auto bg-red-400/90 bg-blur-sm  p-8 rounded-xl shadow-2xl">
-<form method="post">
-{% for field in listing_from %}
-    <div class="flex flex-column text-lg font-semibold text-black mb-2 block">
-        {{ field.errors }}
-        <div>{{ field.label_tag }}</div> <div>{{ field }}</div>
-    </div>
-{% endfor %}
-    <div class="mb-4">
-        <label class="text-lg font-semibold text-black mb-2 block">Categories</label>
-        <div class="flex flex-wrap gap-4">
-            {% for category in categories %}
-                <div class="flex items-center">
-                    <input type="checkbox" id="category{{ category.id }}" name="categories" value="{{ category.id }}" class="form-checkbox h-5 w-5 text-red-500 focus:ring-red-500 focus:border-red-500">
-                    <label for="category{{ category.id }}" class="ml-2">{{ category }}</label>
+        <div class="flex justify-center top-20 mt-10 z-1000 left-0 right-0 w-1/3 p-10 border-4 border-red-400 ml-auto mr-auto bg-red-400/90 bg-blur-sm  p-8 rounded-xl shadow-2xl">
+            <form method="post">
+            {% csrf_token %}
+            {% for field in listing_from %}
+                <div class="flex flex-column text-lg font-semibold text-black mb-2 block">
+                    {{ field.errors }}
+                    <div>{{ field.label_tag }}</div> <div>{{ field }}</div>
                 </div>
             {% endfor %}
+                <div class="mb-4">
+                    <label class="text-lg font-semibold text-black mb-2 block">Categories</label>
+                    <div class="flex flex-wrap gap-4">
+                        {% for category in categories %}
+                            <div class="flex items-center">
+                                <input type="checkbox" id="category{{ category.id }}" name="categories" value="{{ category.id }}" class="form-checkbox h-5 w-5 text-red-500 focus:ring-red-500 focus:border-red-500">
+                                <label for="category{{ category.id }}" class="ml-2">{{ category }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                    Submit
+                </button>
+                <a href="{% url 'index' %}" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Go Back</a>
+            </form>
         </div>
     </div>
-    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-        Submit
-    </button>
-    {% if category_id %}
-    <a href="{% url 'category' category_id %}" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Go Back</a>
-    {% else %}
-    <a href="{% url 'index' %}" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Go Back</a>
-    {% endif %}
-</form>
-</div>
-{% comment %} {% endblock body %} {% endcomment %}
+{% endblock body %}
+

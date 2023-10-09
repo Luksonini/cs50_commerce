@@ -1,5 +1,6 @@
 body {
     padding: 10px;
+    font-family: 'Roboto', sans-serif;
 }
 
 #nav-link{
@@ -13,4 +14,16 @@ body {
 
 .nav-link:hover{
     background-color: #DC2626;
+}
+
+.w-full.rounded-lg::placeholder {
+    font-style: italic;
+    color: rgb(237, 64, 64);     
+    font-size: 12px;  
+}
+
+.auth-placeholder::placeholder {
+    font-style: italic;
+    color: rgb(237, 64, 64);
+    font-size: 12px;
 }

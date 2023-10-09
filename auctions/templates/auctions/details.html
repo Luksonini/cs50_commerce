@@ -1,65 +1,152 @@
-
 {% extends "auctions/layout.html" %}
-
+{% load static %}
+{% block title %}Details{% endblock %}
 {% block body %}
-    {{auction}}
-    <div class="flex flex-wrap relative m-4 p-4 border-2 border-red-200 bg-red-100 rounded-lg shadow-lg overflow-hidden">
-        <div class="basis-1/2 flex gap-5">
-            <div class="w-2/3 text-5xl text-gray-900">
-                <h1 class="font-bold">{{ auction.auction_name }}</h1>
-                <img class="object-cover w-full h-full" src="{{ auction.picture }}" alt="{{ auction.auction_name }}">
-            </div>
-            <div class="item-description mt-2">
-                <span class="font-semibold">Current price: </span><span class="font-bold text-lime-500 text-2xl">{{ auction.actual_bid }} $</span>
-                <p>Owner: {{ auction.owner }}</p>
-            </div>
-            {% comment %} {% if auction in request.user.watchlist.all %}
-            <div class="w-1/2 h-10 flex justify-center items-center absolute bg-blue-300 top-0 right-0 -rotate-45 translate-y-1/3 translate-x-1/3 transition-transform duration-300 transform hover:scale-125">
-                <span class="font-bold text-white">Tracked</span>
-            </div>
-            {% endif %} {% endcomment %}
-            <div class="w-5 h-5 ml-1 mt-1 flex justify-center items-center absolute top-0 left-0 transition-transform duration-300 transform hover:scale-125">
-                {% comment %} {% if auction in request.user.watchlist.all %}
-                <form id="imageForm" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="remove_from_watchlist" value="{{ auction.id }}">
-                    <input type="image" src="{% static 'auctions/close.png' %}" class="w-5 h-5 ml-1 mt-1">
-                </form> 
-                {% else %}
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="add_to_wathlist" value="{{ auction.id }}">
-                    <input type="image" src="{% static 'auctions/check.png' %}" class="w-5 h-5 ml-1 mt-1">
-                </form> 
-                {% endif %} {% endcomment %}
-            </div>
+<div class="flex flex-wrap gap-10 justify-center pt-5 mb-20">
+
+    <!-- Auction Details Section -->
+    <div class="relative flex flex-col items-start rounded-3xl pl-3 pr-3 pt-3 bg-red-100 shadow-xl">
+        <div class="text-3xl text-gray-900">
+            <h1 class="font-bold">{{ auction.auction_name }}</h1>
         </div>
-        <div class="bg-light mx-auto flex flex-col">
-            <div class="bg-light mx-auto flex flex-col">
-                <!-- Sekcja z listą komentarzy z przewijaniem -->
-                <div class="overflow-y-auto h-40">
-                    <ul class="list-group">
-                        {% for comment in comments %}
-                        <div class="list-group-item bg-red-50 border-b-0">
-                            <h3 class="font-bold">{{comment.commenter}}:</h3>
-                            <p>{{comment.comment}}</p>
-                            <p class="italic">{{comment.created_at}}</p>
-                        </div>
-                        {% endfor %}
-                    </ul>
+        {% if user.is_authenticated %}
+        <div class="w-5 h-5 mr-4 mt- flex justify-center items-center absolute top-0 right-0 transition-transform duration-300 transform hover:scale-125">
+            {% if auction in request.user.watchlist.all %}
+            <form id="imageForm" method="post" class="relative group">
+                {% csrf_token %}
+                <input type="hidden" name="remove_from_watchlist" value="{{ auction.id }}">
+                <input type="image" src="{% static 'auctions/close.png' %}" class="w-7 h-7 mt-4">
+                <!-- Tooltip for remove from watchlist -->
+                <div class="absolute right-0 mb-1 w-52 p-2 bg-red-300 text-white text-center text-sm rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition ease-in-out duration-200">
+                    Remove from watchlist
                 </div>
+            </form> 
+            {% else %}
+            <form method="post" class="relative group">
+                {% csrf_token %}
+                <input type="hidden" name="add_to_wathlist" value="{{ auction.id }}">
+                <input type="image" src="{% static 'auctions/eye.png' %}" class="w-9 h-9 mt-4">
+                <!-- Tooltip for add to watchlist -->
+                <div class="absolute right-0 mb-1 w-48 p-2 bg-red-300 text-white text-center text-sm rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition ease-in-out duration-200">
+                    Add to watchlist
+                </div>
+            </form> 
+            {% endif %}
+        </div>
+        {% endif %}
+        <img class="max-h-96 mx-auto" src="{{ auction.picture }}" alt="{{ auction.auction_name }}">
+        <div class="w-full mt-2 max-w-xl">
+            <span class="font-semibold text-2xl">Current price: </span><span class="font-bold text-lime-500 text-2xl">{{ auction.actual_bid }} $</span>
+            <hr class="my-4 border-t border-red-400">
+            <p class="font-semibold text-xl">Created by: {{ auction.owner }}
+            <p class="italic text-base">{{auction.created_at}}</span></p>
+            <hr class="my-4 border-t border-red-400">
+            <div class="flex justify-between">
+                <div>
+                    <p class="font-semibold text-xl">Status: 
+                    {% if auction.bid_open %}
+                    <span class="font-semibold text-2xl text-lime-500 mx-auto">Bid Open</span>
+                    {% else %}
+                    <span class="font-semibold text-2xl text-red-500 mx-auto">Bid Closed, Won by: <span class="text-lime-500">{{bids.first.bidder}}</span></span>
+                    {% endif %}
+                </div>
+                <div>
+                    {% if request.user == auction.owner and auction.bid_open %}
+                        <form action="{% url 'details' auction.id %}" method="POST">
+                            {% csrf_token %}
+                            <input  type="hidden" name="close_bid" value="True">
+                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-10">
+                                Close Bid
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+            <hr class="my-4 border-t border-red-400">
+            <p class="font-semibold text-xl">Description:</p>
+            <br>
+            <p class="max-w-xl">{{description|safe }}</p>
+        </div>   
+    </div>
+    
+    <!-- Comments and Bids Section -->
+    <div class="flex flex-col gap-20 pl-3 pr-3">
+         
+        <!-- Comments Listing -->
+        <div class="rounded-3xl pl-3 pt-3 pr-3 bg-red-100 shadow-xl">
+            <span class="self-start font-semibold text-2xl">Comments:</span>
+            <div class="overflow-y-auto h-64 mt-2">
+                <ul class="list-group">
+                    {% for comment in comments %}
+                    <div class="list-group-item bg-red-50 border-b-0">
+                        <h3 class="font-bold">{{comment.commenter}}:</h3>
+                        <p>{{comment.comment}}</p>
+                        <p class="italic">{{comment.created_at}}</p>
+                    </div>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Comment Form -->
+            {% if user.is_authenticated %}
+                <div class="border-solid border-2 border-red-400 w-95 rounded-3xl m-2 bg-red-50">
+                    <form method="post" action="{% url 'details' auction.id %}" class="flex items-center mx-2 justify-around">
+                        {% csrf_token %}
+                        {{ comment_form.comment }}
+                        <button type="submit" class="bg-transparent border-none p-0">
+                            <img src="{% static 'auctions/send-message.png' %}" alt="Submit" class="w-5 h-5 opacity-70 hover:opacity-60 rotate-180" />
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+            <p class="font-semibold text-xl p-2">Log in to comment.</p>
+            {% endif %}
+        </div>
+
+        <!-- Bids Listing -->
+        <div class="rounded-3xl pl-3 pt-3 pr-3 bg-red-100 shadow-xl flex-shrink-0">
+            <span class="self-start font-semibold text-2xl mt-2">Bids:</span>
             
-                <!-- Formularz dodawania komentarza -->
-                <form method="post" action="{% url 'details' auction.id %}" >
-                    {% csrf_token %}
-                    <div>
-                        <input type="text" class="h-10 overflow-auto p-2 mt-1 rounded border" placeholder="Dodaj komentarz">
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Dodaj komentarz</button>
+            <div class="overflow-y-auto h-64 mt-2">
+                <ul class="list-group">
+                    {% for bid in bids %}
+                    <div class="list-group-item bg-red-50 border-b-0">
+                        <h3 class="font-bold">{{bid.bidder}} made BID <span class="italic font-normal">on {{bid.bid_date}}</span></h3>
+                        <p class="font-bold text-lime-500 text-xl">$ {{bid.bid_amount}}</p>
                     </div>
-                    <div class="mt-2 h-10">
+                    {% endfor %}
+                </ul>
+            </div>
+            {% if user.is_authenticated %}
+                {% if request.user != auction.owner and auction.bid_open %}
+                <!-- Bid Form -->
+                    <div class="border-solid border-2 border-red-400 w-95 rounded-3xl m-2 bg-red-50">
+                        <form method="post" action="{% url 'details' auction.id %}" class="flex items-center mx-2 justify-around">
+                            {% csrf_token %}
+                            {{ bid_form.bid }}
+                            <button type="submit" class="bg-transparent border-none p-2">
+                                <img src="{% static 'auctions/bid.png' %}" alt="Submit" class="w-7 h-7 hover:opacity-80" />
+                            </button>
+                        </form>
                     </div>
-                </form>
-            </div> 
-        </div> 
-    </div>    
+            
+                    <!-- Displaying Bid Form Errors -->
+                    <div class="text-red-600 font-bold text-center">
+                        {% for key, value in bid_form.errors.items %}
+                            {% for error in value %}
+                                {{ error }}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                {% elif not auction.bid_open %}
+                    <p class="font-semibold text-xl p-2">The bid is closed, the winner is: <span class="font-bold text-lime-500 text-xl">{{bids.first.bidder}}</span></p>
+                {% elif request.user == auction.owner and auction.bid_open %} 
+                    <p class="font-semibold text-xl p-2">As an owner you are not allowed to bid</p>
+                {% endif %}
+            {% else %}
+            <p class="font-semibold text-xl p-2">Log in to place a bid.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock body %}

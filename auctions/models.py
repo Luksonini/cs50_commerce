@@ -38,6 +38,7 @@ class AuctionListingModel(models.Model):
     watch_list = models.ManyToManyField(User, related_name='watchlist')
     picture = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    bid_open = models.BooleanField(default=True)
 
     def __str__(self):
         return f"Auction: {self.auction_name} Owner: {self.owner} Current price: {self.actual_bid}"
@@ -47,9 +48,10 @@ class BidModel(models.Model):
     """
     Model representing bids on auction listings.
     """
-    auction = models.ForeignKey(AuctionListingModel, on_delete=models.CASCADE, related_name="auctions")
+    auction = models.ForeignKey(AuctionListingModel, on_delete=models.CASCADE, related_name="bids")
     bidder = models.ForeignKey(User, on_delete=models.CASCADE)
     bid_amount = models.IntegerField()
+    bid_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Auction: {self.auction.auction_name} Bidder: {self.bidder} Bid Amount: {self.bid_amount}"

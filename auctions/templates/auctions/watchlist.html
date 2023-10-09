@@ -1,0 +1,58 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+{% block title %}Watchlist{% endblock %}
+{% block body %}
+<div class="mx-20 mt-10 max-w-lg mx-auto">
+    {% for auction in auctions %}
+    <a href={% url 'details' auction.id %} class="no-underline hover:text-current hover:no-underline relative block m-4 p-4 border-2 border-red-200 bg-red-100 rounded-lg cursor-pointer shadow-lg">
+        <div class="flex items-center">
+            <div class="w-32 h-32 bg-white mr-4">
+                <img class="object-contain w-full h-full" src="{{ auction.picture }}" alt="{{ auction.auction_name }}">
+            </div>
+            <div class="flex-grow">
+                <h3 class="font-bold">{{ auction.auction_name }}</h3>
+                <span class="font-semibold">Current price: </span><span class="font-bold text-lime-500 text-xl">{{ auction.actual_bid }} $</span>
+                <p>Owner: {{ auction.owner }}</p>
+            </div>
+
+            {% if auction.bid_open %}
+                <div class="w-1/3 h-8 flex justify-center items-center bg-blue-300 rounded-full ml-4">
+                    <span class="font-bold text-white">Open</span>
+                </div>
+            {% else %}
+                <div class="w-1/3 h-8 flex justify-center items-center bg-red-400 rounded-full ml-4">
+                    <span class="font-bold text-white">Closed</span>
+                </div>
+            {% endif %}
+
+            <div class="ml-4 relative group">
+                {% if auction in request.user.watchlist.all %}
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="remove_from_watchlist" value="{{ auction.id }}">
+                    <input type="image" src="{% static 'auctions/close.png' %}" class="mt-2 w-5 h-5 ">
+                    <div class="absolute left-10 bottom-0 w-52 p-2 bg-red-300 text-white text-center text-sm rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition ease-in-out duration-200">
+                        Remove from watchlist
+                    </div>
+                </form> 
+                {% else %}
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="add_to_wathlist" value="{{ auction.id }}">
+                    <input type="image" src="{% static 'auctions/eye.png' %}" class="mt-2 w-7 h-7 ">
+                    <div class="absolute left-10 bottom-0 mb-1 w-48 p-2 bg-red-300 text-white text-center text-sm rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition ease-in-out duration-200">
+                        Add to watchlist
+                    </div>
+                </form> 
+                {% endif %}
+            </div>
+        </div>
+    </a>
+    <hr class="border-red-200 my-4"> 
+    {% endfor %}
+
+    {% if listing_from %} 
+        {% include "auctions/create_listing.html" %}  
+    {% endif %}
+</div>
+{% endblock %}
