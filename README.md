@@ -1,5 +1,6 @@
 # Interactive Online Auction System
-![image](https://github.com/Luksonini/cs50_commerce/assets/97095836/35718676-6ccb-48b6-8938-4c27107a4d4f)
+![DALL·E 2023-12-17 13 15 55 - Create a YouTube thumbnail for a channel named 'Lobolatory Manager'  The design should feature a stylized laboratory setting with flasks and test tube (1)_16x9](https://github.com/Luksonini/cs50_commerce/assets/97095836/fc5d7388-d0de-4a58-8197-81f72d217be4)
+
 
 ![image](https://github.com/Luksonini/cs50_commerce/assets/97095836/19b575dc-b577-4418-80fb-b35a31dc12c4)
 
