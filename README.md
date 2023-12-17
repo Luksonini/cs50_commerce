@@ -1,5 +1,7 @@
 # Interactive Online Auction System
-![image](https://github.com/Luksonini/cs50_commerce/assets/97095836/73c9bbf7-34f8-483f-8c35-62c94d5f3ce0)
+![image](https://github.com/Luksonini/cs50_commerce/assets/97095836/35718676-6ccb-48b6-8938-4c27107a4d4f)
+
+![image](https://github.com/Luksonini/cs50_commerce/assets/97095836/19b575dc-b577-4418-80fb-b35a31dc12c4)
 
 ## Overview
 The Interactive Online Auction System is a dynamic web application for auction enthusiasts. It offers a feature-rich platform for seamless auction participation, including listing browsing, active bidding, and user watchlist management.
