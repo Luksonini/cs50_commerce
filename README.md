@@ -1,5 +1,6 @@
 # Interactive Online Auction System
-![image](https://github.com/Luksonini/cs50_commerce/assets/97095836/c8fbf19c-527c-479f-8b3d-85b6088ea1e5)
+![image](https://github.com/Luksonini/cs50_commerce/assets/97095836/77a5f66e-ef25-4d95-b0b7-3a61de175d8b)
+
 
 
 ![image](https://github.com/Luksonini/cs50_commerce/assets/97095836/19b575dc-b577-4418-80fb-b35a31dc12c4)
